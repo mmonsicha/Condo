@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mellow Habitat | Luxury Pet-Friendly Condo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f4efe8;
+      --surface:#fbf8f3;
+      --surface-2:#ede5d8;
+      --text:#1b1814;
+      --muted:#6f675d;
+      --line:rgba(27,24,20,.12);
+      --line-strong:rgba(27,24,20,.22);
+      --white:#fff;
+      --overlay:rgba(8,8,8,.5);
+      --overlay-soft:rgba(8,8,8,.18);
+      --accent:#9d7c52;
+      --accent-deep:#6c5435;
+      --shadow:0 24px 80px rgba(18,14,9,.08);
+      --radius:28px;
+      --max:1400px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{font-family:'Manrope',sans-serif;background:
+      radial-gradient(circle at top left, rgba(207,186,154,.16), transparent 28%),
+      linear-gradient(180deg, #f7f2ea 0%, #f4efe8 100%);
+      color:var(--text);overflow-x:hidden;line-height:1.5}
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+    .container{width:min(calc(100vw - 48px), var(--max));margin-inline:auto}
+    .section{padding:clamp(72px,8vw,120px) 0}
+    .eyebrow,.section-kicker{display:inline-block;font-size:12px;letter-spacing:.18em;text-transform:uppercase}
+    .eyebrow{color:rgba(255,255,255,.82);margin-bottom:18px}
+    .section-kicker{color:var(--accent-deep);margin-bottom:18px}
+    .nav{position:fixed;top:0;left:0;right:0;z-index:80;padding:20px 0;transition:background .35s ease,backdrop-filter .35s ease,border-color .35s ease,padding .35s ease;border-bottom:1px solid transparent}
+    .nav.is-scrolled{background:rgba(247,242,234,.78);backdrop-filter:blur(18px);border-color:var(--line);padding:14px 0}
+    .nav-inner{width:min(calc(100vw - 48px), var(--max));margin:auto;display:flex;align-items:center;justify-content:space-between;gap:24px}
+    .brand{font-family:'Cormorant Garamond',serif;font-size:clamp(24px,2.2vw,34px);letter-spacing:.05em;color:#fff;transition:color .35s ease}
+    .nav.is-scrolled .brand{color:var(--text)}
+    .nav-links{display:flex;align-items:center;gap:28px;list-style:none}
+    .nav-links a,.contact-link{position:relative;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.9);transition:color .35s ease,opacity .35s ease}
+    .nav.is-scrolled .nav-links a,.nav.is-scrolled .contact-link{color:var(--text)}
+    .nav-links a::after,.contact-link::after,.text-link::after{content:"";position:absolute;left:0;bottom:-6px;width:100%;height:1px;background:currentColor;transform:scaleX(0);transform-origin:left;transition:transform .4s ease;opacity:.7}
+    .nav-links a:hover::after,.contact-link:hover::after,.text-link:hover::after{transform:scaleX(1)}
+    .hero{position:relative;min-height:100svh;display:flex;align-items:flex-end;color:var(--white);overflow:hidden;background:#111}
+    .hero-stage,.hero-overlay,.hero-noise,.hero-grid{position:absolute;inset:0}
+    .hero-stage{z-index:0}
+    .hero-slide{position:absolute;inset:0;opacity:0;transition:opacity 1.4s cubic-bezier(.22,1,.36,1)}
+    .hero-slide.is-active{opacity:1}
+    .hero-slide::after{content:"";position:absolute;inset:0;background:
+      linear-gradient(180deg, rgba(5,5,5,.12) 0%, rgba(5,5,5,.34) 45%, rgba(5,5,5,.68) 100%),
+      linear-gradient(90deg, rgba(5,5,5,.4) 0%, rgba(5,5,5,.16) 35%, rgba(5,5,5,.1) 100%)}
+    .hero-slide img{width:100%;height:100%;object-fit:cover;transform:scale(1.12) translate3d(0,0,0);filter:saturate(1.04) contrast(1.02);animation:kenBurns 14s ease-in-out infinite alternate}
+    .hero-slide[data-pan="left"] img{animation-name:kenBurnsLeft}
+    .hero-slide[data-pan="right"] img{animation-name:kenBurnsRight}
+    .hero-slide[data-pan="up"] img{animation-name:kenBurnsUp}
+    .hero-overlay{z-index:1;background:
+      radial-gradient(circle at 76% 22%, rgba(214,188,145,.18), transparent 24%),
+      linear-gradient(180deg, rgba(10,10,10,.04) 0%, rgba(10,10,10,.18) 40%, rgba(10,10,10,.56) 100%)}
+    .hero-noise{z-index:2;opacity:.18;background-image:radial-gradient(rgba(255,255,255,.14) .8px, transparent .8px);background-size:18px 18px;mix-blend-mode:soft-light}
+    .hero-grid{position:relative;z-index:3;display:grid;grid-template-columns:minmax(0,1.12fr) minmax(320px,.88fr);gap:42px;align-items:end;width:min(calc(100vw - 48px), var(--max));margin:auto;padding:calc(118px + 4vh) 0 48px}
+    .hero-copy{max-width:760px;opacity:0;transform:translateY(28px);animation:textReveal 1.2s cubic-bezier(.22,1,.36,1) .25s forwards}
+    .hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(54px,7.4vw,112px);line-height:.92;font-weight:600;letter-spacing:-.035em;margin-bottom:20px;text-wrap:balance}
+    .hero p{max-width:620px;font-size:clamp(16px,1.35vw,20px);color:rgba(255,255,255,.84)}
+    .hero-actions{margin-top:32px;display:flex;flex-wrap:wrap;gap:14px}
+    .btn{display:inline-flex;align-items:center;justify-content:center;min-height:54px;padding:0 24px;border-radius:999px;border:1px solid rgba(255,255,255,.24);font-size:13px;letter-spacing:.08em;text-transform:uppercase;transition:transform .35s ease,background .35s ease,border-color .35s ease,color .35s ease,opacity .35s ease;backdrop-filter:blur(10px)}
+    .btn-primary{background:rgba(255,255,255,.94);color:var(--text);border-color:transparent}
+    .btn-secondary{background:rgba(255,255,255,.08);color:#fff}
+    .btn:hover{transform:translateY(-2px);opacity:.97}
+    .btn-secondary:hover{background:rgba(255,255,255,.14)}
+    .hero-meta{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
+    .hero-pill{padding:12px 16px;border:1px solid rgba(255,255,255,.14);border-radius:999px;background:rgba(255,255,255,.08);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.86)}
+    .hero-aside{display:grid;gap:18px;justify-self:end;width:min(100%,392px)}
+    .hero-panel{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(16px);box-shadow:0 24px 90px rgba(0,0,0,.16)}
+    .hero-panel{border-radius:30px;padding:24px;opacity:0;transform:translateY(28px);animation:textReveal 1.25s cubic-bezier(.22,1,.36,1) .45s forwards}
+    .hero-panel small{display:block;margin-bottom:10px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.72)}
+    .hero-panel strong{display:block;font-family:'Cormorant Garamond',serif;font-size:36px;line-height:1;font-weight:600;margin-bottom:14px}
+    .hero-panel p{font-size:14px;line-height:1.7;color:rgba(255,255,255,.8);margin-bottom:18px}
+    .text-link{position:relative;color:#fff;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
+    .hero-progress{position:absolute;left:50%;bottom:18px;z-index:4;transform:translateX(-50%);display:flex;gap:10px;align-items:center}
+    .hero-progress button{width:46px;height:4px;border:0;border-radius:999px;background:rgba(255,255,255,.28);overflow:hidden;cursor:pointer}
+    .hero-progress button span{display:block;width:100%;height:100%;background:#fff;transform:scaleX(0);transform-origin:left center;opacity:.95}
+    .hero-progress button.is-active span{animation:progressFill 4.8s linear forwards}
+    .feature-band{background:rgba(255,255,255,.58);border-top:1px solid var(--line);border-bottom:1px solid var(--line);backdrop-filter:blur(12px)}
+    .feature-grid{display:grid;grid-template-columns:repeat(4,1fr)}
+    .feature-item{padding:30px 24px;border-right:1px solid var(--line)}
+    .feature-item:last-child{border-right:none}
+    .feature-item span{display:block;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+    .feature-item strong{font-family:'Cormorant Garamond',serif;font-size:30px;font-weight:600}
+    .split{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:40px;align-items:start}
+    .section-head{margin-bottom:28px}
+    .section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,4vw,64px);line-height:.98;letter-spacing:-.02em;font-weight:600;margin-bottom:18px;text-wrap:balance}
+    .section-desc{max-width:700px;color:var(--muted);font-size:17px;line-height:1.8}
+    #overview{background:transparent}
+    .brand-wide{width:min(calc(100vw - 36px), 1700px);margin-inline:auto}
+    .brand-long-visual{margin-top:34px;overflow:hidden;border-radius:36px;background:transparent}
+    .brand-long-visual img{width:100%;aspect-ratio:3.15/1;object-fit:contain;object-position:center;display:block;background:transparent}
+    .unit-card,.testimonial,.contact-card{background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+    .unit-body,.testimonial-body,.contact-body{padding:26px}
+    .media-cover{width:100%;height:100%;object-fit:cover;transition:transform .45s ease;aspect-ratio:1.12/1;background:linear-gradient(135deg, rgba(157,124,82,.16), rgba(27,24,20,.04))}
+    .unit-card:hover .media-cover,.facility-card:hover .facility-image{transform:scale(1.05)}
+    .unit-card h3,.testimonial h3,.contact-card h3{font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1;font-weight:600;margin-bottom:10px}
+    .unit-card p,.testimonial p,.contact-card p{color:var(--muted);line-height:1.8;font-size:15px}
+    .unit-meta{display:flex;flex-wrap:wrap;gap:10px 16px;padding-top:18px;margin-top:18px;border-top:1px solid var(--line);color:var(--text);font-size:13px;letter-spacing:.04em;text-transform:uppercase}
+    .overview-panel{position:sticky;top:100px;padding:30px;background:linear-gradient(180deg, rgba(255,255,255,.8), rgba(255,255,255,.94));border:1px solid var(--line);border-radius:32px;box-shadow:var(--shadow)}
+    .overview-panel h3{font-family:'Cormorant Garamond',serif;font-size:38px;margin-bottom:18px}
+    .overview-list{display:grid;gap:14px;margin-top:22px;padding-top:22px;border-top:1px solid var(--line)}
+    .overview-list div{display:flex;justify-content:space-between;gap:16px;color:var(--muted);font-size:14px;text-transform:uppercase;letter-spacing:.08em}
+    .overview-list strong{color:var(--text);font-weight:600;text-align:right}
+    .units-grid{display:grid;gap:26px}
+    .unit-price{display:flex;align-items:end;justify-content:space-between;gap:16px;margin-top:24px;padding-top:20px;border-top:1px solid var(--line)}
+    .unit-price strong{font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1;font-weight:600}
+    .status{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-deep)}
+    .facilities-stage{display:grid;gap:28px}
+    .facilities-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(320px,.9fr);gap:32px;align-items:end}
+    .facilities-head .section-title em{color:var(--accent);font-style:italic;font-weight:500}
+    .facility-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:18px}
+    .facility-card{position:relative;display:flex;align-items:flex-end;min-height:480px;padding:26px;border:0;border-radius:30px;overflow:hidden;background:#1a1713;color:#fff;cursor:pointer;box-shadow:var(--shadow);text-align:left;font:inherit;appearance:none}
+    .facility-card::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg, rgba(10,10,10,.08) 12%, rgba(10,10,10,.72) 100%);z-index:1}
+    .facility-card::after{content:"";position:absolute;left:26px;right:26px;bottom:24px;height:1px;background:rgba(255,255,255,.18);z-index:2;opacity:0;transition:opacity .35s ease}
+    .facility-card:hover::after,.facility-card:focus-visible::after{opacity:1}
+    .facility-card:focus-visible{outline:2px solid rgba(157,124,82,.88);outline-offset:4px}
+    .facility-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .55s ease}
+    .facility-copy{position:relative;z-index:2}
+    .facility-copy h3{font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1.02;font-weight:600;margin-bottom:12px}
+    .facility-copy p{font-size:14px;line-height:1.75;color:rgba(255,255,255,.82);margin-bottom:18px}
+    .facility-tap{display:inline-flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#f4dfbc}
+    .facility-tap::after{content:"";display:block;width:52px;height:1px;background:currentColor;opacity:.6}
+    .facility-modal{position:fixed;inset:0;z-index:120;display:flex;align-items:center;justify-content:center;padding:28px;background:rgba(8,8,8,.68);backdrop-filter:blur(10px);opacity:0;pointer-events:none;transition:opacity .3s ease}
+    .facility-modal.is-open{opacity:1;pointer-events:auto}
+    .facility-dialog{position:relative;width:min(1220px,calc(100vw - 48px));min-height:min(78vh,760px);display:grid;grid-template-columns:minmax(320px,.62fr) minmax(0,1fr);border-radius:34px;overflow:hidden;background:#171412;box-shadow:0 30px 120px rgba(0,0,0,.32)}
+    .facility-dialog-copy{padding:58px 48px;background:linear-gradient(180deg, rgba(11,11,11,.82), rgba(11,11,11,.58));color:#fff;position:relative;z-index:2}
+    .facility-dialog-copy small{display:block;font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:#d7a34a;margin-bottom:20px}
+    .facility-dialog-copy h3{font-family:'Cormorant Garamond',serif;font-size:64px;line-height:.94;font-weight:600;margin-bottom:22px}
+    .facility-dialog-copy p{font-size:18px;line-height:1.8;color:rgba(255,255,255,.8);margin-bottom:22px}
+    .facility-features{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;padding-top:18px;margin-top:18px;border-top:1px solid rgba(255,255,255,.14)}
+    .facility-features li{list-style:none;font-size:14px;line-height:1.55;color:rgba(255,255,255,.82)}
+    .facility-dialog-media{position:relative;min-height:100%}
+    .facility-dialog-media::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg, rgba(11,11,11,.14) 0%, rgba(11,11,11,0) 34%)}
+    .facility-dialog-media img{width:100%;height:100%;object-fit:cover}
+    .facility-dialog-actions{display:flex;gap:12px;margin-top:28px;flex-wrap:wrap}
+    .facility-close{position:absolute;top:18px;right:18px;z-index:4;width:44px;height:44px;border-radius:999px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.12);color:#fff;font-size:24px;line-height:1;cursor:pointer}
+    .unit-spec-card{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);background:rgba(255,255,255,.78);border:1px solid var(--line);border-radius:34px;overflow:hidden;box-shadow:var(--shadow)}
+    .unit-gallery{position:relative;min-height:100%;background:#ece5da;overflow:hidden;border-right:1px solid var(--line)}
+    .unit-slider-track{display:flex;height:100%;transition:transform .45s ease}
+    .unit-slide{min-width:100%;height:100%}
+    .unit-slide img{width:100%;height:100%;min-height:520px;max-height:720px;object-fit:cover;display:block}
+    .unit-slider-ui{position:absolute;left:20px;right:20px;bottom:18px;z-index:3;display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .unit-dots{display:flex;gap:8px;flex-wrap:wrap}
+    .unit-dot{width:10px;height:10px;border-radius:999px;border:1px solid rgba(255,255,255,.55);background:rgba(255,255,255,.22);cursor:pointer}
+    .unit-dot.is-active{background:#fff;border-color:#fff}
+    .unit-slider-controls{display:flex;gap:10px}
+    .unit-slider-btn{width:42px;height:42px;border-radius:999px;border:1px solid rgba(255,255,255,.28);background:rgba(20,18,15,.34);color:#fff;font-size:20px;cursor:pointer;backdrop-filter:blur(10px)}
+    .unit-gallery-badge{position:absolute;top:18px;left:18px;z-index:3;padding:10px 14px;border-radius:999px;background:rgba(19,17,14,.48);backdrop-filter:blur(12px);color:#fff;font-size:11px;letter-spacing:.16em;text-transform:uppercase}
+    .unit-spec-body{padding:24px 24px 22px}
+    .unit-spec-header{display:flex;align-items:start;justify-content:space-between;gap:18px;padding-bottom:16px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+    .unit-spec-header h3{font-family:'Cormorant Garamond',serif;font-size:42px;line-height:.94;font-weight:600;margin-bottom:6px}
+    .unit-subtitle{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-deep)}
+    .unit-lead{font-size:15px;line-height:1.7;color:var(--muted);margin-bottom:18px}
+    .unit-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:18px}
+    .unit-fact{padding:14px 14px;border-radius:18px;background:rgba(157,124,82,.08);border:1px solid rgba(157,124,82,.12)}
+    .unit-fact span{display:block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+    .unit-fact strong{font-size:14px;line-height:1.45}
+    .unit-spec-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
+    .unit-column-title{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:12px}
+    .unit-features{display:grid;gap:10px}
+    .unit-features li{list-style:none;padding-left:16px;position:relative;color:var(--muted);line-height:1.6;font-size:14px}
+    .unit-features li::before{content:"";position:absolute;left:0;top:11px;width:7px;height:7px;border-radius:999px;background:var(--accent)}
+    .unit-view-copy{color:var(--muted);line-height:1.65;font-size:14px}
+    .unit-price-panel{display:flex;align-items:end;justify-content:space-between;gap:16px;padding-top:18px;margin-top:18px;border-top:1px solid var(--line)}
+    .unit-price-panel strong{font-family:'Cormorant Garamond',serif;font-size:34px;line-height:1;font-weight:600}
+    .unit-price-panel .status{font-size:12px}
+    .promo{background:
+      radial-gradient(circle at top right, rgba(255,255,255,.11), transparent 34%),
+      linear-gradient(135deg, #1c1712 0%, #2a2219 100%);
+      color:#fff;border-radius:36px;padding:clamp(28px,4vw,52px);display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:28px;align-items:end;overflow:hidden;position:relative}
+    .promo h2{font-family:'Cormorant Garamond',serif;font-size:clamp(38px,5vw,74px);line-height:.96;margin-bottom:14px}
+    .promo p{max-width:720px;color:rgba(255,255,255,.76)}
+    .promo-aside{padding-left:24px;border-left:1px solid rgba(255,255,255,.14)}
+    .promo-aside strong{display:block;font-family:'Cormorant Garamond',serif;font-size:52px;font-weight:600;line-height:.92;margin-bottom:10px}
+    .testimonials-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+    .testimonial-body{display:flex;flex-direction:column;gap:18px;min-height:100%}
+    .quote{font-family:'Cormorant Garamond',serif;font-size:30px;line-height:1.15}
+    .author{padding-top:16px;margin-top:auto;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-transform:uppercase;letter-spacing:.08em}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+    .map-frame{min-height:100%;border:0;width:100%;aspect-ratio:1.2/1;filter:grayscale(1) contrast(1.05) saturate(.75)}
+    .contact-row{display:grid;gap:16px;margin-top:20px;padding-top:20px;border-top:1px solid var(--line)}
+    .contact-row div{display:flex;justify-content:space-between;gap:16px;font-size:15px;color:var(--muted)}
+    .contact-row strong{color:var(--text);font-weight:600;text-align:right}
+    .footer{padding:28px 0 46px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+    .footer-inner{width:min(calc(100vw - 48px), var(--max));margin:auto;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+    [data-reveal]{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s ease;will-change:opacity,transform}
+    [data-reveal].is-visible{opacity:1;transform:translateY(0)}
+    @keyframes textReveal{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+    @keyframes kenBurns{from{transform:scale(1.14) translate3d(0,0,0)}to{transform:scale(1.01) translate3d(-1.5%,1.5%,0)}}
+    @keyframes kenBurnsLeft{from{transform:scale(1.14) translate3d(2%,0,0)}to{transform:scale(1.01) translate3d(-2%,1%,0)}}
+    @keyframes kenBurnsRight{from{transform:scale(1.14) translate3d(-2%,0,0)}to{transform:scale(1.01) translate3d(2%,1.5%,0)}}
+    @keyframes kenBurnsUp{from{transform:scale(1.14) translate3d(0,2%,0)}to{transform:scale(1.01) translate3d(1.2%,-1.6%,0)}}
+    @keyframes progressFill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+    @media (max-width:1100px){
+      .hero-grid,.split,.promo,.contact-grid,.unit-spec-card,.unit-spec-grid,.facilities-head,.facility-dialog{grid-template-columns:1fr}
+      .hero-aside{justify-self:start}
+      .feature-grid,.testimonials-grid,.unit-facts{grid-template-columns:repeat(2,1fr)}
+      .facility-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+      .overview-panel{position:relative;top:auto}
+    }
+    @media (max-width:780px){
+      .container,.nav-inner,.hero-grid,.footer-inner{width:min(calc(100vw - 28px), var(--max))}
+      .nav-links{display:none}
+      .hero-grid{padding-top:118px;padding-bottom:48px}
+      .feature-grid,.testimonials-grid,.contact-grid,.facility-grid,.facility-features,.unit-facts{grid-template-columns:1fr}
+      .feature-item{border-right:none;border-bottom:1px solid var(--line)}
+      .feature-item:last-child{border-bottom:none}
+      .promo-aside{border-left:none;padding-left:0;border-top:1px solid rgba(255,255,255,.14);padding-top:20px}
+      .section{padding:72px 0}
+      .btn{width:100%}
+      .hero-actions{display:grid;grid-template-columns:1fr}
+      .hero h1{font-size:clamp(42px,15vw,72px)}
+      .hero-progress{bottom:10px}
+      .brand-wide{width:min(calc(100vw - 20px), 1700px)}
+      .brand-long-visual img{aspect-ratio:2.1/1}
+      .facility-card{min-height:380px}
+      .facility-dialog{width:min(calc(100vw - 24px),1220px);min-height:auto}
+      .facility-dialog-copy{padding:42px 24px}
+      .facility-dialog-copy h3{font-size:46px}
+      .unit-slide img{min-height:340px}
+      .unit-spec-body{padding:24px}
+      .unit-spec-header h3{font-size:40px}
+    }
+    @media (prefers-reduced-motion: reduce){
+      *,*::before,*::after{animation:none !important;transition:none !important;scroll-behavior:auto !important}
+      .hero-slide,.hero-copy,.hero-panel,[data-reveal]{opacity:1 !important;transform:none !important}
+    }
+  </style>
+</head>
+<body>
+  <header class="nav" id="navbar">
+    <div class="nav-inner">
+      <a href="#hero" class="brand">Mellow Habitat</a>
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#overview">Overview</a></li>
+          <li><a href="#facilities">Facilities</a></li>
+          <li><a href="#units">Units</a></li>
+          <li><a href="#testimonials">Testimonials</a></li>
+        </ul>
+      </nav>
+      <a href="#contact" class="contact-link">Private Viewing</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="hero">
+      <div class="hero-stage" aria-hidden="true">
+        <div class="hero-slide is-active" data-pan="left">
+          <img src="./assets/hero/corgi-space-hero.png" alt="Luxury outdoor pool lounge at Mellow Habitat">
+        </div>
+        <div class="hero-slide" data-pan="right">
+          <img src="./assets/hero/mellow-habitat-1.png" alt="Mellow Habitat exterior tower surrounded by gardens">
+        </div>
+        <div class="hero-slide" data-pan="up">
+          <img src="./assets/hero/mellow-habitat-3.png" alt="Rooftop pet park at sunset">
+        </div>
+      </div>
+      <div class="hero-overlay" aria-hidden="true"></div>
+      <div class="hero-noise" aria-hidden="true"></div>
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">Luxury Pet-Friendly Living</span>
+          <h1>Say Goodbye to<br>Old Restrictions</h1>
+          <p>Step into a residence where refined design, generous outdoor living, and true pet-friendly planning replace the usual limitations of urban condo life.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#contact">Book a Private Viewing</a>
+            <a class="btn btn-secondary" href="#units">Browse Available Units</a>
+          </div>
+          <div class="hero-meta">
+            <div class="hero-pill">True pet-friendly ownership</div>
+            <div class="hero-pill">Clinic, grooming and sitter on-site</div>
+            <div class="hero-pill">Sound-managed premium interiors</div>
+          </div>
+        </div>
+
+        <aside class="hero-aside">
+          <div class="hero-panel">
+            <small>Starting Price</small>
+            <strong>3.59 MB*</strong>
+            <p>V.I.P. presale privileges include savings up to THB 200,000, curated pet-friendly furnishings, and move-in perks tailored for both owners and companions.</p>
+            <a class="text-link" href="#contact">Register for Priority Access</a>
+          </div>
+        </aside>
+      </div>
+      <div class="hero-progress" aria-label="Hero slideshow controls">
+        <button class="is-active" data-slide="0" aria-label="Show pool view"><span></span></button>
+        <button data-slide="1" aria-label="Show exterior view"><span></span></button>
+        <button data-slide="2" aria-label="Show rooftop park view"><span></span></button>
+      </div>
+    </section>
+
+    <section class="feature-band">
+      <div class="container feature-grid">
+        <div class="feature-item"><span>Location</span><strong>400 m to BTS</strong></div>
+        <div class="feature-item"><span>Pet Policy</span><strong>100% Welcome</strong></div>
+        <div class="feature-item"><span>Project Scale</span><strong>32 Floors</strong></div>
+        <div class="feature-item"><span>Living Concept</span><strong>Human + Pet Harmony</strong></div>
+      </div>
+    </section>
+
+    <section class="section" id="overview">
+      <div class="container split">
+        <div>
+          <div class="section-head" data-reveal>
+            <span class="section-kicker">Brand & Positioning</span>
+            <h2 class="section-title">Minimal luxury for modern urban owners who refuse to compromise on pet comfort</h2>
+            <p class="section-desc">Mellow Habitat is positioned as a premium condominium that treats pet-friendly living as an architectural standard, not an afterthought. Every touchpoint, from circulation and materials to wellness systems and in-building services, is designed to support a calmer shared life for people, dogs, and cats.</p>
+          </div>
+        </div>
+        <aside class="overview-panel" data-reveal>
+          <h3>Project Snapshot</h3>
+          <p class="section-desc">Created for city professionals, couples, committed pet owners, and buyers seeking a differentiated product in the Sukhumvit - On Nut corridor.</p>
+          <div class="overview-list">
+            <div><span>Location</span><strong>Sukhumvit 50</strong></div>
+            <div><span>Transit</span><strong>BTS On Nut, 400 m</strong></div>
+            <div><span>Materials</span><strong>SPC flooring + sound-managed walls</strong></div>
+            <div><span>Wellness</span><strong>Air purifier + PM 2.5 filtration</strong></div>
+            <div><span>Services</span><strong>Clinic, grooming and pet sitter</strong></div>
+          </div>
+        </aside>
+      </div>
+      <div class="brand-wide">
+        <figure class="brand-long-visual" data-reveal>
+          <img src="./assets/overview/con-do-sketch.png" alt="Long architectural sketch illustration of Mellow Habitat">
+        </figure>
+      </div>
+    </section>
+
+    <section class="section" id="facilities">
+      <div class="container">
+        <div class="facilities-stage" data-reveal>
+          <div class="facilities-head">
+            <div>
+              <span class="section-kicker">Facilities</span>
+              <h2 class="section-title">Every Space <em>Crafted for</em><br>You and Your Pets</h2>
+            </div>
+            <p class="section-desc">Live together naturally with amenities designed around daily routines, wellness, and play. Tap any card to open the full view experience.</p>
+          </div>
+          <div class="facility-grid">
+            <button class="facility-card" type="button" data-facility="rooftop" aria-label="Open full view for Rooftop Pet Park">
+              <img class="facility-image" src="./assets/facilities/rooftop-pet-park.png" alt="Rooftop Pet Park">
+              <div class="facility-copy">
+                <h3>Rooftop Pet Park</h3>
+                <p>A rooftop escape with separate zones for play, sunset lounging, and skyline-time together.</p>
+                <span class="facility-tap">Tap for full view</span>
+              </div>
+            </button>
+            <button class="facility-card" type="button" data-facility="cat-lounge" aria-label="Open full view for Cat Lounge and Co-working">
+              <img class="facility-image" src="./assets/facilities/cat-lounge-coworking.png" alt="Cat Lounge and Co-working">
+              <div class="facility-copy">
+                <h3>Cat Lounge &amp; Co-working</h3>
+                <p>Work beside your companion with climbing walls, playful tunnels, and a calm lounge atmosphere.</p>
+                <span class="facility-tap">Tap for full view</span>
+              </div>
+            </button>
+            <button class="facility-card" type="button" data-facility="pet-care" aria-label="Open full view for 24/7 Pet care">
+              <img class="facility-image" src="./assets/facilities/pet-care-247.png" alt="24/7 Pet care">
+              <div class="facility-copy">
+                <h3>24/7 Pet care</h3>
+                <p>A complete veterinary, grooming, and wellness floor with trusted daily support services.</p>
+                <span class="facility-tap">Tap for full view</span>
+              </div>
+            </button>
+            <button class="facility-card" type="button" data-facility="interiors" aria-label="Open full view for Pet-Centric Interiors">
+              <img class="facility-image" src="./assets/facilities/pet-centric-interiors.png" alt="Pet-Centric Interiors">
+              <div class="facility-copy">
+                <h3>Pet-Centric Interiors</h3>
+                <p>Durable, slip-aware flooring and welcoming layouts built around comfort, movement, and ease.</p>
+                <span class="facility-tap">Tap for full view</span>
+              </div>
+            </button>
+            <button class="facility-card" type="button" data-facility="air-system" aria-label="Open full view for Purified Air System">
+              <img class="facility-image" src="./assets/facilities/purified-air-system.png" alt="Purified Air System">
+              <div class="facility-copy">
+                <h3>Purified Air System</h3>
+                <p>Fresh-air filtration and layered acoustic planning help keep every room lighter, cleaner, and quieter.</p>
+                <span class="facility-tap">Tap for full view</span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="units">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <span class="section-kicker">Room Type Specifications</span>
+          <h2 class="section-title">Detailed layouts designed around the lives of owners and the pets they love most</h2>
+          <p class="section-desc">Each room type is tailored to a different living pattern, from cat-first compact planning and playful dog-friendly layouts to large family suites and specialty homes for exotic companions. Use the image sliders to explore each type in detail.</p>
+        </div>
+        <div class="units-grid">
+          <article class="unit-spec-card" data-reveal>
+            <div class="unit-gallery" data-slider="meow-starter">
+              <div class="unit-gallery-badge">Image Slider</div>
+              <div class="unit-slider-track">
+                <div class="unit-slide"><img src="./assets/units/meow-starter/1.png" alt="Meow Starter living area with hidden cat cabinet"></div>
+                <div class="unit-slide"><img src="./assets/units/meow-starter/2.png" alt="Meow Starter lounging space with cat-friendly storage"></div>
+                <div class="unit-slide"><img src="./assets/units/meow-starter/3.png" alt="Meow Starter bedroom with cat wall steps"></div>
+              </div>
+              <div class="unit-slider-ui">
+                <div class="unit-dots">
+                  <button class="unit-dot is-active" type="button" data-slide="0" aria-label="Show Meow Starter image 1"></button>
+                  <button class="unit-dot" type="button" data-slide="1" aria-label="Show Meow Starter image 2"></button>
+                  <button class="unit-dot" type="button" data-slide="2" aria-label="Show Meow Starter image 3"></button>
+                </div>
+                <div class="unit-slider-controls">
+                  <button class="unit-slider-btn" type="button" data-action="prev" aria-label="Previous Meow Starter image">&#8249;</button>
+                  <button class="unit-slider-btn" type="button" data-action="next" aria-label="Next Meow Starter image">&#8250;</button>
+                </div>
+              </div>
+            </div>
+            <div class="unit-spec-body">
+              <div class="unit-spec-header">
+                <div>
+                  <h3>Meow Starter</h3>
+                  <div class="unit-subtitle">1 Bedroom | A compact sanctuary for devoted cat owners</div>
+                </div>
+                <span class="status">Available</span>
+              </div>
+              <p class="unit-lead">A compact room type created specifically for singles and owners with one or two cats. The layout makes excellent use of vertical space, so the home feels cat-ready from the moment you move in.</p>
+              <div class="unit-facts">
+                <div class="unit-fact"><span>Type</span><strong>1 Bedroom<br>1 Bedroom / 1 Bathroom / Open Kitchen</strong></div>
+                <div class="unit-fact"><span>Area</span><strong>28.5 sq.m.</strong></div>
+                <div class="unit-fact"><span>View</span><strong>Level 8 | East-facing morning light | City view</strong></div>
+              </div>
+              <div class="unit-spec-grid">
+                <div>
+                  <div class="unit-column-title">Built-in & Pet Features</div>
+                  <ul class="unit-features">
+                    <li>A hidden litter cabinet is built beneath the TV counter with a dedicated odor-exhaust fan directed to the balcony.</li>
+                    <li>Minimal cat wall steps are integrated into the room palette for everyday climbing and vertical enrichment.</li>
+                    <li>Low-E window glass filters UV and reduces heat gain so sunbathing stays bright but comfortable.</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="unit-column-title">Why It Works</div>
+                  <p class="unit-view-copy">The east-facing position welcomes soft morning light that cats love, while the compact plan keeps maintenance easy and every built-in purposeful.</p>
+                </div>
+              </div>
+              <div class="unit-price-panel">
+                <strong>THB 3,590,000</strong>
+                <span class="status">Ready to reserve | Sample room viewing available</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="unit-spec-card" data-reveal>
+            <div class="unit-gallery" data-slider="corgi-space">
+              <div class="unit-gallery-badge">Image Slider</div>
+              <div class="unit-slider-track">
+                <div class="unit-slide"><img src="./assets/units/corgi-space/1.png" alt="Corgi Space living room with closed kitchen"></div>
+                <div class="unit-slide"><img src="./assets/units/corgi-space/2.png" alt="Corgi Space outdoor pool and dog-friendly atmosphere"></div>
+                <div class="unit-slide"><img src="./assets/units/corgi-space/3.png" alt="Corgi Space play-ready room for small dogs"></div>
+              </div>
+              <div class="unit-slider-ui">
+                <div class="unit-dots">
+                  <button class="unit-dot is-active" type="button" data-slide="0" aria-label="Show Corgi Space image 1"></button>
+                  <button class="unit-dot" type="button" data-slide="1" aria-label="Show Corgi Space image 2"></button>
+                  <button class="unit-dot" type="button" data-slide="2" aria-label="Show Corgi Space image 3"></button>
+                </div>
+                <div class="unit-slider-controls">
+                  <button class="unit-slider-btn" type="button" data-action="prev" aria-label="Previous Corgi Space image">&#8249;</button>
+                  <button class="unit-slider-btn" type="button" data-action="next" aria-label="Next Corgi Space image">&#8250;</button>
+                </div>
+              </div>
+            </div>
+            <div class="unit-spec-body">
+              <div class="unit-spec-header">
+                <div>
+                  <h3>Corgi Space</h3>
+                  <div class="unit-subtitle">1 Bedroom Plus | A wider layout for small-to-medium dogs</div>
+                </div>
+                <span class="status">2 Units Left</span>
+              </div>
+              <p class="unit-lead">This one-bedroom plus layout adds a flexible extra room, ideal for owners of small-to-medium dogs who want more secure running space and a stronger day-to-day routine at home.</p>
+              <div class="unit-facts">
+                <div class="unit-fact"><span>Type</span><strong>1 Bedroom Plus<br>1 Bedroom / 1 Plus Room / Closed Kitchen</strong></div>
+                <div class="unit-fact"><span>Area</span><strong>35.0 sq.m.</strong></div>
+                <div class="unit-fact"><span>View</span><strong>Level 12 | South-facing breeze | Central garden view</strong></div>
+              </div>
+              <div class="unit-spec-grid">
+                <div>
+                  <div class="unit-column-title">Built-in & Pet Features</div>
+                  <ul class="unit-features">
+                    <li>Premium SPC flooring provides a softer underfoot feel and helps reduce impact stress on canine joints.</li>
+                    <li>A sliding glass partition separates the closed kitchen to keep curious dogs away from food prep and trash bins.</li>
+                    <li>A complimentary smart pet door links the living room and balcony for easier supervised movement.</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="unit-column-title">Why It Works</div>
+                  <p class="unit-view-copy">With a cooler south-facing orientation and a plus room that can become a play zone, grooming corner, or work nook, this type feels flexible without sacrificing calm.</p>
+                </div>
+              </div>
+              <div class="unit-price-panel">
+                <strong>THB 4,250,000</strong>
+                <span class="status">Only 2 units remaining</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="unit-spec-card" data-reveal>
+            <div class="unit-gallery" data-slider="pack-suite">
+              <div class="unit-gallery-badge">Image Slider</div>
+              <div class="unit-slider-track">
+                <div class="unit-slide"><img src="./assets/units/pack-suite/1.png" alt="The Pack Suite spacious family living room"></div>
+                <div class="unit-slide"><img src="./assets/units/pack-suite/2.png" alt="The Pack Suite premium living and dining area"></div>
+                <div class="unit-slide"><img src="./assets/units/pack-suite/3.png" alt="The Pack Suite pet-friendly bathroom wash zone"></div>
+                <div class="unit-slide"><img src="./assets/units/pack-suite/4.png" alt="The Pack Suite evening bedroom atmosphere"></div>
+              </div>
+              <div class="unit-slider-ui">
+                <div class="unit-dots">
+                  <button class="unit-dot is-active" type="button" data-slide="0" aria-label="Show The Pack Suite image 1"></button>
+                  <button class="unit-dot" type="button" data-slide="1" aria-label="Show The Pack Suite image 2"></button>
+                  <button class="unit-dot" type="button" data-slide="2" aria-label="Show The Pack Suite image 3"></button>
+                  <button class="unit-dot" type="button" data-slide="3" aria-label="Show The Pack Suite image 4"></button>
+                </div>
+                <div class="unit-slider-controls">
+                  <button class="unit-slider-btn" type="button" data-action="prev" aria-label="Previous The Pack Suite image">&#8249;</button>
+                  <button class="unit-slider-btn" type="button" data-action="next" aria-label="Next The Pack Suite image">&#8250;</button>
+                </div>
+              </div>
+            </div>
+            <div class="unit-spec-body">
+              <div class="unit-spec-header">
+                <div>
+                  <h3>The Pack Suite</h3>
+                  <div class="unit-subtitle">2 Bedroom | A large home for families and bigger dogs</div>
+                </div>
+                <span class="status">Hot Deal</span>
+              </div>
+              <p class="unit-lead">A generous two-bedroom plan with a house-like sense of function, created for couples and families living with larger breeds such as Golden Retrievers or Siberians.</p>
+              <div class="unit-facts">
+                <div class="unit-fact"><span>Type</span><strong>2 Bedroom<br>2 Bedrooms / 2 Bathrooms / Closed Kitchen</strong></div>
+                <div class="unit-fact"><span>Area</span><strong>50.0 sq.m.</strong></div>
+                <div class="unit-fact"><span>View</span><strong>Level 22 | South-east corner | Wide city panorama</strong></div>
+              </div>
+              <div class="unit-spec-grid">
+                <div>
+                  <div class="unit-column-title">Built-in & Pet Features</div>
+                  <ul class="unit-features">
+                    <li>Double soundproof wall construction helps prevent barking noise from carrying to neighboring units.</li>
+                    <li>The master bathroom includes an extra-wide wash zone and a low-height shower fixture for dog bathing.</li>
+                    <li>A built-in ceiling air purifier runs continuously to reduce odor, fur, and airborne particles.</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="unit-column-title">Why It Works</div>
+                  <p class="unit-view-copy">This is the most residential-feeling layout in the collection, giving owners more separation, more bath functionality, and stronger acoustic comfort across the day.</p>
+                </div>
+              </div>
+              <div class="unit-price-panel">
+                <strong>THB 6,500,000</strong>
+                <span class="status">Hot Deal | Transfer fee waived</span>
+              </div>
+            </div>
+          </article>
+
+          <article class="unit-spec-card" data-reveal>
+            <div class="unit-gallery" data-slider="exotic-haven">
+              <div class="unit-gallery-badge">Image Slider</div>
+              <div class="unit-slider-track">
+                <div class="unit-slide"><img src="./assets/units/exotic-haven/1.png" alt="Exotic Haven climate-controlled enclosure room"></div>
+                <div class="unit-slide"><img src="./assets/units/exotic-haven/2.png" alt="Exotic Haven smart climate control display"></div>
+                <div class="unit-slide"><img src="./assets/units/exotic-haven/3.png" alt="Exotic Haven wash zone and balcony care area"></div>
+              </div>
+              <div class="unit-slider-ui">
+                <div class="unit-dots">
+                  <button class="unit-dot is-active" type="button" data-slide="0" aria-label="Show Exotic Haven image 1"></button>
+                  <button class="unit-dot" type="button" data-slide="1" aria-label="Show Exotic Haven image 2"></button>
+                  <button class="unit-dot" type="button" data-slide="2" aria-label="Show Exotic Haven image 3"></button>
+                </div>
+                <div class="unit-slider-controls">
+                  <button class="unit-slider-btn" type="button" data-action="prev" aria-label="Previous Exotic Haven image">&#8249;</button>
+                  <button class="unit-slider-btn" type="button" data-action="next" aria-label="Next Exotic Haven image">&#8250;</button>
+                </div>
+              </div>
+            </div>
+            <div class="unit-spec-body">
+              <div class="unit-spec-header">
+                <div>
+                  <h3>Exotic Haven</h3>
+                  <div class="unit-subtitle">1 Bedroom Custom | A specialist home for exotic companions</div>
+                </div>
+                <span class="status">Rare Item</span>
+              </div>
+              <p class="unit-lead">A special custom-plan unit designed around lighting systems, utility zones, and environmental control for owners of birds, rabbits, chinchillas, reptiles, and other exotic pets.</p>
+              <div class="unit-facts">
+                <div class="unit-fact"><span>Type</span><strong>1 Bedroom<br>Custom-configured specialist plan</strong></div>
+                <div class="unit-fact"><span>Area</span><strong>30.0 sq.m.</strong></div>
+                <div class="unit-fact"><span>View</span><strong>Level 10 | North-facing | Lower direct sun for steadier temperature</strong></div>
+              </div>
+              <div class="unit-spec-grid">
+                <div>
+                  <div class="unit-column-title">Built-in & Pet Features</div>
+                  <ul class="unit-features">
+                    <li>A wall-integrated smart climate control system manages temperature and humidity precisely through an app-based interface.</li>
+                    <li>A built-in terrarium station uses a reinforced stone counter and higher-capacity power outlets for heat lamps and habitat equipment.</li>
+                    <li>The balcony utility zone includes a faucet and low-pressure hose for easier cleaning of trays, cages, and specialty accessories.</li>
+                  </ul>
+                </div>
+                <div>
+                  <div class="unit-column-title">Why It Works</div>
+                  <p class="unit-view-copy">The north-facing orientation supports more stable interior conditions, while the custom utilities make the space far more practical for animals that need controlled environments.</p>
+                </div>
+              </div>
+              <div class="unit-price-panel">
+                <strong>THB 3,890,000</strong>
+                <span class="status">Limited special-release units</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="promo" data-reveal>
+          <div>
+            <h2>Starting from THB 3.59M* for a 1 Bedroom made for modern life with pets</h2>
+            <p>Register for a private project visit today and unlock V.I.P. presale savings of up to THB 200,000, plus a complimentary fully furnished pet-friendly package with either a built-in cat condo or a dog door upgrade.</p>
+            <div class="hero-actions" style="margin-top:28px">
+              <a class="btn btn-primary" href="#contact">Schedule a Private Viewing</a>
+              <a class="btn btn-secondary" href="#contact">Register for V.I.P. Privileges</a>
+            </div>
+          </div>
+          <aside class="promo-aside">
+            <strong>THB 200K</strong>
+            <p>Enjoy five complimentary transfer-day fees and a two-year annual pet health check package from the in-house project clinic.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="testimonials">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <span class="section-kicker">Testimonials</span>
+          <h2 class="section-title">Confidence built through real owners and real needs</h2>
+          <p class="section-desc">The social proof mix reflects different decision drivers, from cats and dogs to quiet living, health systems, and long-term confidence in the product.</p>
+        </div>
+        <div class="testimonials-grid">
+          <article class="testimonial" data-reveal>
+            <div class="testimonial-body">
+              <p class="quote">“The layouts feel beautifully resolved. Even the hidden pet storage and vertical cat elements feel intentional, not improvised.”</p>
+              <div class="author">Nina P. | Brand Strategist | 29</div>
+            </div>
+          </article>
+          <article class="testimonial" data-reveal>
+            <div class="testimonial-body">
+              <p class="quote">“The rooftop park and durable flooring make city life with an energetic dog feel dramatically easier every single day.”</p>
+              <div class="author">Pop K. | Commercial Photographer | 31</div>
+            </div>
+          </article>
+          <article class="testimonial" data-reveal>
+            <div class="testimonial-body">
+              <p class="quote">“From an animal wellness perspective, the air systems, acoustic control, and in-building care services are what set this apart.”</p>
+              <div class="author">Dr. Beam T. | Veterinarian | 34</div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="contact">
+      <div class="container contact-grid">
+        <article class="contact-card" data-reveal>
+          <div class="contact-body">
+            <span class="section-kicker">Contact</span>
+            <h3>Private Viewing</h3>
+            <p>Schedule a private tour, secure V.I.P. presale privileges, and speak with the sales team daily from 09:00 to 18:00.</p>
+            <div class="contact-row">
+              <div><span>Sales Office</span><strong>02-123-4567</strong></div>
+              <div><span>Email</span><strong>sales@mellowhabitat.com</strong></div>
+              <div><span>Line Official</span><strong>@MellowHabitat</strong></div>
+              <div><span>Sales Gallery</span><strong>Sukhumvit 50, Bangkok</strong></div>
+            </div>
+            <div class="hero-actions" style="margin-top:28px">
+              <a class="btn btn-primary" href="tel:021234567">Call Now</a>
+              <a class="btn btn-secondary" href="https://maps.app.goo.gl/xp6TBqnvfCkJfDpg9" target="_blank" rel="noreferrer">Open Map</a>
+            </div>
+          </div>
+        </article>
+        <article class="contact-card" data-reveal>
+          <iframe class="map-frame" src="https://www.google.com/maps?q=Sukhumvit%2050%2C%20Bangkok&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <span>(c) 2025 Mellow Development Co., Ltd. / All rights reserved.</span>
+      <span>Every corner, designed for you and your pets.</span>
+    </div>
+  </footer>
+
+  <div class="facility-modal" id="facilityModal" aria-hidden="true">
+    <div class="facility-dialog" role="dialog" aria-modal="true" aria-labelledby="facilityModalTitle">
+      <button class="facility-close" type="button" id="facilityModalClose" aria-label="Close full view">&times;</button>
+      <div class="facility-dialog-copy">
+        <small id="facilityModalLabel">Full View Experience</small>
+        <h3 id="facilityModalTitle"></h3>
+        <p id="facilityModalDescription"></p>
+        <ul class="facility-features" id="facilityModalFeatures"></ul>
+        <div class="facility-dialog-actions">
+          <a class="btn btn-primary" href="#contact">Book a Private Tour</a>
+          <button class="btn btn-secondary" type="button" id="facilityModalDismiss">Close Preview</button>
+        </div>
+      </div>
+      <div class="facility-dialog-media">
+        <img id="facilityModalImage" src="" alt="">
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const nav = document.getElementById('navbar');
+    const revealEls = document.querySelectorAll('[data-reveal]');
+    const slides = document.querySelectorAll('.hero-slide');
+    const progressButtons = document.querySelectorAll('.hero-progress button');
+    const facilityButtons = document.querySelectorAll('.facility-card');
+    const unitGalleries = document.querySelectorAll('.unit-gallery');
+    const facilityModal = document.getElementById('facilityModal');
+    const facilityModalTitle = document.getElementById('facilityModalTitle');
+    const facilityModalDescription = document.getElementById('facilityModalDescription');
+    const facilityModalImage = document.getElementById('facilityModalImage');
+    const facilityModalFeatures = document.getElementById('facilityModalFeatures');
+    const facilityModalClose = document.getElementById('facilityModalClose');
+    const facilityModalDismiss = document.getElementById('facilityModalDismiss');
+    let activeSlide = 0;
+    let heroTimer;
+    let lastFacilityTrigger = null;
+
+    const facilityContent = {
+      rooftop: {
+        title: 'Rooftop Pet Park',
+        description: 'A calm sky-level retreat for daily play, slow sunset walks, and pet-friendly social time with activity zones designed for different energy levels.',
+        image: './assets/facilities/rooftop-pet-park.png',
+        alt: 'Rooftop Pet Park full view',
+        features: [
+          'Separate zones for small and large dogs',
+          'Saltwater pet pool and rinse area',
+          'Sunset seating deck for owners and guests',
+          'Wide skyline views with secure perimeter design'
+        ]
+      },
+      'cat-lounge': {
+        title: 'Cat Lounge & Co-working',
+        description: 'A warm work-and-rest environment where vertical exploration, soft daylight, and cat-safe pathways make daily routines feel natural.',
+        image: './assets/facilities/cat-lounge-coworking.png',
+        alt: 'Cat Lounge and Co-working full view',
+        features: [
+          'Integrated climbing wall and tunnel loop',
+          'Work desks with long-window city views',
+          'Relaxed seating for breaks and casual meetings',
+          'Pet-visible planning for lower-stress workdays'
+        ]
+      },
+      'pet-care': {
+        title: '24/7 Pet care',
+        description: 'In-building pet care support gives owners easy access to grooming, clinic services, wellness check-ins, and trusted help for busy days.',
+        image: './assets/facilities/pet-care-247.png',
+        alt: '24/7 Pet care full view',
+        features: [
+          'Veterinary and wellness consultation access',
+          'Professional grooming within the residence',
+          'Pet-sitting support for travel and late nights',
+          'Convenient drop-off flow at ground level'
+        ]
+      },
+      interiors: {
+        title: 'Pet-Centric Interiors',
+        description: 'Everyday materials are selected for easier cleaning, safer traction, and a softer living experience that still feels premium.',
+        image: './assets/facilities/pet-centric-interiors.png',
+        alt: 'Pet-Centric Interiors full view',
+        features: [
+          'Slip-aware flooring with durable finish',
+          'Layouts that support play, rest, and circulation',
+          'Natural light balanced with warm neutral finishes',
+          'Comfort-first details for both owners and pets'
+        ]
+      },
+      'air-system': {
+        title: 'Purified Air System',
+        description: 'Purified airflow, PM 2.5 filtration, and layered acoustic treatment create a cleaner and calmer indoor environment throughout the building.',
+        image: './assets/facilities/purified-air-system.png',
+        alt: 'Purified Air System full view',
+        features: [
+          'Fresh-air circulation with PM 2.5 filtration',
+          'Layered wall construction for lower sound transfer',
+          'Healthier everyday comfort for sensitive pets',
+          'Built-in support for longer indoor stays'
+        ]
+      }
+    };
+
+    const onScroll = () => nav.classList.toggle('is-scrolled', window.scrollY > 20);
+
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.18, rootMargin: '0px 0px -8% 0px' });
+
+    const setSlide = (index) => {
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle('is-active', slideIndex === index);
+      });
+
+      progressButtons.forEach((button, buttonIndex) => {
+        button.classList.toggle('is-active', buttonIndex === index);
+        const meter = button.querySelector('span');
+        meter.style.animation = 'none';
+        void meter.offsetWidth;
+        meter.style.animation = buttonIndex === index ? 'progressFill 4.8s linear forwards' : 'none';
+      });
+
+      activeSlide = index;
+    };
+
+    const startHeroRotation = () => {
+      clearInterval(heroTimer);
+      heroTimer = window.setInterval(() => {
+        setSlide((activeSlide + 1) % slides.length);
+      }, 4800);
+    };
+
+    const setUnitSlide = (gallery, index) => {
+      const track = gallery.querySelector('.unit-slider-track');
+      const slides = gallery.querySelectorAll('.unit-slide');
+      const dots = gallery.querySelectorAll('.unit-dot');
+      const total = slides.length;
+      const nextIndex = (index + total) % total;
+      gallery.dataset.index = String(nextIndex);
+      track.style.transform = `translateX(-${nextIndex * 100}%)`;
+      dots.forEach((dot, dotIndex) => {
+        dot.classList.toggle('is-active', dotIndex === nextIndex);
+      });
+    };
+
+    const closeFacilityModal = () => {
+      facilityModal.classList.remove('is-open');
+      facilityModal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      if (lastFacilityTrigger) lastFacilityTrigger.focus();
+    };
+
+    const openFacilityModal = (key, trigger) => {
+      const data = facilityContent[key];
+      if (!data) return;
+
+      lastFacilityTrigger = trigger;
+      facilityModalTitle.textContent = data.title;
+      facilityModalDescription.textContent = data.description;
+      facilityModalImage.src = data.image;
+      facilityModalImage.alt = data.alt;
+      facilityModalFeatures.innerHTML = '';
+      data.features.forEach((feature) => {
+        const item = document.createElement('li');
+        item.textContent = feature;
+        facilityModalFeatures.appendChild(item);
+      });
+
+      facilityModal.classList.add('is-open');
+      facilityModal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+      facilityModalClose.focus();
+    };
+
+    revealEls.forEach((el) => io.observe(el));
+    progressButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        setSlide(Number(button.dataset.slide));
+        startHeroRotation();
+      });
+    });
+    unitGalleries.forEach((gallery) => {
+      gallery.dataset.index = '0';
+      const dots = gallery.querySelectorAll('.unit-dot');
+      const controls = gallery.querySelectorAll('.unit-slider-btn');
+
+      dots.forEach((dot) => {
+        dot.addEventListener('click', () => setUnitSlide(gallery, Number(dot.dataset.slide)));
+      });
+
+      controls.forEach((control) => {
+        control.addEventListener('click', () => {
+          const current = Number(gallery.dataset.index || 0);
+          const direction = control.dataset.action === 'next' ? 1 : -1;
+          setUnitSlide(gallery, current + direction);
+        });
+      });
+    });
+    facilityButtons.forEach((button) => {
+      button.addEventListener('click', () => openFacilityModal(button.dataset.facility, button));
+    });
+    facilityModalClose.addEventListener('click', closeFacilityModal);
+    facilityModalDismiss.addEventListener('click', closeFacilityModal);
+    facilityModal.addEventListener('click', (event) => {
+      if (event.target === facilityModal) closeFacilityModal();
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && facilityModal.classList.contains('is-open')) closeFacilityModal();
+    });
+
+    window.addEventListener('scroll', onScroll, { passive:true });
+    setSlide(0);
+    startHeroRotation();
+    onScroll();
+  </script>
+</body>
+</html>
